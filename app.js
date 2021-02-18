@@ -16,6 +16,4 @@ app.use('/', cardsRouter);
 
 app.use('/', noSuchPageRouter);
 
-app.listen(PORT, () => {
-  console.log(`Слушаем на порту: ${PORT}`);
-});
+app.listen(PORT, () => {});
