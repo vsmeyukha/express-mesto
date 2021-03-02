@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 
 module.exports = mongoose.model('user', userSchema);
 
-// TODO написать регулярку для функции валидации ссылок.
-// TODO написать функцию валидации ссылок.
-// TODO разобраться с лайками
-// TODO разобраться с createdAt
+// TODO написать регулярку для функции валидации ссылок - done
+// TODO написать функцию валидации ссылок - done
+// TODO разобраться с лайками - done
+// TODO разобраться с createdAt - done

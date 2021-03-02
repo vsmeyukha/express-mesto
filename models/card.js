@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const ownerSchema = new mongoose.Schema({
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'user',
+  required: true,
+});
+
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,21 +24,11 @@ const cardSchema = new mongoose.Schema({
       message: 'Ссылка на изображение недействительна!',
     },
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    required: true,
-  },
-  //! по поводу лайков есть сомнения, что это правильный код
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    required: true,
-    // ! тут еще значение по умолчанию
-  }],
+  owner: ownerSchema,
+  likes: [ownerSchema], // ! у массивов дефолтное значение - пустой массив, это не нужно прописывать
   createdAt: {
     type: Date,
-    // ! тут еще значение по умолчанию
+    default: Date.now,
   },
 });
 
