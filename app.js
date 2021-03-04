@@ -10,6 +10,9 @@ const noSuchPageRouter = require('./routes/noSuchPage');
 // ! импортируем роутер взаимодействия с базой пользователей
 const usersRouterDB = require('./routes/usersDB');
 
+// ! импортируем роутер взаимодей=ствия с базой карточек
+const cardsRouterDB = require('./routes/cardsDB');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -28,8 +31,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', usersRouterDB);
 
-app.use('/', cardsRouter);
+app.use('/', cardsRouterDB);
+
+// app.use('/', cardsRouter);
 
 app.use('/', noSuchPageRouter);
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '60408bf9e910ee3a814fde4c', // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
 
 app.listen(PORT, () => {});
