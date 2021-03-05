@@ -15,27 +15,20 @@ const cardsRouterDB = require('./routes/cardsDB');
 
 const app = express();
 
+const { PORT = 3000 } = process.env;
+
 app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
-});
-
-const { PORT = 3000 } = process.env;
+})
+  .then(() => console.log('Подключено к базе данных'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/', usersRouter);
-
-app.use('/', usersRouterDB);
-
-app.use('/', cardsRouterDB);
-
-// app.use('/', cardsRouter);
-
-app.use('/', noSuchPageRouter);
 
 app.use((req, res, next) => {
   req.user = {
@@ -44,5 +37,13 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use('/', usersRouterDB);
+
+app.use('/', cardsRouterDB);
+
+// app.use('/', cardsRouter);
+
+app.use('/', noSuchPageRouter);
 
 app.listen(PORT, () => {});

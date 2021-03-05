@@ -18,9 +18,10 @@ const deleteCard = (req, res) => {
 
 const createCard = (req, res) => {
   console.log(req.user._id);
+  const ownerId = req.user._id;
   const { name, link } = req.body;
 
-  Card.create({ name, link })
+  Card.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => res.status(500).send(`Ошибка: ${err}. Карточка не создана`));
 };
