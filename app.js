@@ -1,10 +1,7 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
 const noSuchPageRouter = require('./routes/noSuchPage');
 
 // ! импортируем роутер взаимодействия с базой пользователей
@@ -26,8 +23,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json());
 
-// app.use('/', usersRouter);
-
 app.use((req, res, next) => {
   req.user = {
     _id: '60408bf9e910ee3a814fde4c', // вставьте сюда _id созданного в предыдущем пункте пользователя
@@ -39,8 +34,6 @@ app.use((req, res, next) => {
 app.use('/', usersRouterDB);
 
 app.use('/', cardsRouterDB);
-
-// app.use('/', cardsRouter);
 
 app.use('/', noSuchPageRouter);
 

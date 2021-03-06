@@ -16,7 +16,6 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  console.log(req);
   const { name, about, avatar } = req.body;
 
   // if (!name || !about) {
@@ -35,7 +34,7 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     _id,
     { name, about },
-    { new: true }
+    { new: true },
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send(`Не удалось обновить профиль. Ошибка: ${err}`));

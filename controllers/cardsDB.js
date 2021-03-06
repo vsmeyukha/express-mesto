@@ -17,7 +17,6 @@ const deleteCard = (req, res) => {
 };
 
 const createCard = (req, res) => {
-  console.log(req.user._id);
   const ownerId = req.user._id;
   const { name, link } = req.body;
 
@@ -42,4 +41,6 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => res.status(500).send(`Не удалось удалить лайк: ${err}`));
 
-module.exports = { getAllCards, deleteCard, createCard, likeCard, dislikeCard };
+module.exports = {
+  getAllCards, deleteCard, createCard, likeCard, dislikeCard,
+};
