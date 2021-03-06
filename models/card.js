@@ -1,11 +1,5 @@
 const mongoose = require('mongoose');
 
-const ownerSchema = new mongoose.Schema({
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'user',
-  required: true,
-});
-
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -24,12 +18,25 @@ const cardSchema = new mongoose.Schema({
       message: 'Ссылка на изображение недействительна!',
     },
   },
-  owner: ownerSchema,
-  likes: [ownerSchema], // ! у массивов дефолтное значение - пустой массив, это не нужно прописывать
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: true,
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+  }], // ! у массивов дефолтное значение - пустой массив, это не нужно прописывать
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
+// const ownerSchema = new mongoose.Schema({
+//   type: mongoose.Schema.Types.ObjectId,
+//   ref: 'user',
+//   required: true,
+// });
 
 module.exports = mongoose.model('card', cardSchema);

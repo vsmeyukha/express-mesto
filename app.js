@@ -17,8 +17,6 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-app.use(bodyParser.json());
-
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -27,6 +25,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   .then(() => console.log('Подключено к базе данных'));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(bodyParser.json());
 
 // app.use('/', usersRouter);
 
