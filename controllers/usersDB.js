@@ -8,22 +8,32 @@ const getAllUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => {
+    .then((user) => res.status(200).send(user))
+    .catch((err, user) => {
       if (!user) {
-        return res.status(404).send('Нет пользователя с таким id');
-      } return res.status(200).send(user);
+        return res.status(404).send({
+          message: 'Нет пользователя с таким id',
+        });
+      } return res.status(500).send({
+        message: `Ошибка сервера: ${err}`,
+      });
     });
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  // if (!name || !about) {
-  //   return res.status(400).send('Заполните поля')
-  // }
   User.create({ name, about, avatar })
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send(`Ошибка: ${err}. Пользователь не создан`));
+    .catch((err) => {
+      if (!name || !about) {
+        return res.status(400).send({
+          message: 'Вы не заполнили обязательные поля',
+        });
+      } return res.status(500).send({
+        message: `Ошибка сервера: ${err}`,
+      });
+    });
 };
 
 const updateUser = (req, res) => {
@@ -35,9 +45,20 @@ const updateUser = (req, res) => {
     _id,
     { name, about },
     { new: true },
+    { runValidators: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send(`Не удалось обновить профиль. Ошибка: ${err}`));
+    .catch((err) => {
+      if (!name || !about) {
+        return res.status(400).send({
+          message: 'Вы не заполнили обязательные поля',
+        });
+      } return res.status(500).send(
+        {
+          message: `Ошибка: ${err}. Пользователь не обновлен`,
+        },
+      );
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -45,9 +66,22 @@ const updateAvatar = (req, res) => {
 
   const { _id = '' } = req.user;
 
-  User.findByIdAndUpdate(_id, { avatar }, { new: true })
+  User.findByIdAndUpdate(
+    _id,
+    { avatar },
+    { new: true },
+    { runValidators: true },
+  )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send(`Не удалось обновить аватар. Ошибка: ${err}`));
+    .catch((err) => {
+      if (!avatar) {
+        return res.status(400).send({
+          message: 'Вы не заполнили обязательные поля',
+        });
+      } return res.status(500).send({
+        message: `Ошибка: ${err}. Аватар не обновлен`,
+      });
+    });
 };
 
 module.exports = {
