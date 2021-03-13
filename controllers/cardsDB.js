@@ -9,10 +9,23 @@ const getAllCards = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
+    .then((card) => res.status(200).send({
+      message: `Удалено: ${card}`,
+    }))
+    .catch((err, card) => {
+      if (!req.params.cardId) {
+        return res.status(400).send({
+          message: 'Ошибка. Карточки не существует',
+        });
+      }
       if (!card) {
-        return res.status(404).send('Нет такой карточки');
-      } return res.status(200).send(`Удалено: ${card}`);
+        return res.status(404).send({
+          message: `Ошибка: ${err}. Нет такой карточки`,
+        });
+      }
+      return res.status(500).send({
+        message: `Ошибка: ${err}`,
+      });
     });
 };
 
@@ -22,7 +35,16 @@ const createCard = (req, res) => {
 
   Card.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send(`Ошибка: ${err}. Карточка не создана`));
+    .catch((err) => {
+      if (!name || !link) {
+        return res.status(400).send({
+          message: `Ошибка: ${err}. Вы не заполнили обязательные поля`,
+        });
+      }
+      return res.status(500).send({
+        message: `Ошибка: ${err}`,
+      });
+    });
 };
 
 const likeCard = (req, res) => Card.findByIdAndUpdate(
@@ -31,7 +53,21 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .then((card) => res.status(200).send({ data: card }))
-  .catch((err) => res.status(500).send(`Не удалось поставить лайк: ${err}`));
+  .catch((err, card) => {
+    if (!req.params.cardId) {
+      return res.status(400).send({
+        message: `Ошибка: ${err}. Id карточки не задан.`,
+      });
+    }
+    if (!card) {
+      return res.status(404).send({
+        message: `Ошибка: ${err}. Нет такой карточки`,
+      });
+    }
+    return res.status(500).send({
+      message: `Ошибка: ${err}`,
+    });
+  });
 
 const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
@@ -39,7 +75,21 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .then((card) => res.status(200).send({ data: card }))
-  .catch((err) => res.status(500).send(`Не удалось удалить лайк: ${err}`));
+  .catch((err, card) => {
+    if (!req.params.cardId) {
+      return res.status(400).send({
+        message: `Ошибка: ${err}. Id карточки не задан.`,
+      });
+    }
+    if (!card) {
+      return res.status(404).send({
+        message: `Ошибка: ${err}. Нет такой карточки`,
+      });
+    }
+    return res.status(500).send({
+      message: `Ошибка: ${err}`,
+    });
+  });
 
 module.exports = {
   getAllCards, deleteCard, createCard, likeCard, dislikeCard,

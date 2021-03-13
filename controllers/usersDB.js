@@ -44,11 +44,13 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     _id,
     { name, about },
-    { new: true },
-    { runValidators: true },
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
+    .catch((err, user) => {
       if (!name || !about) {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
@@ -69,8 +71,10 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     _id,
     { avatar },
-    { new: true },
-    { runValidators: true },
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
