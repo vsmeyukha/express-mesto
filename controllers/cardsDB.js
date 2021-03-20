@@ -13,7 +13,8 @@ const deleteCard = (req, res) => {
       message: `Удалено: ${card}`,
     }))
     .catch((err, card) => {
-      if (!req.params.cardId) {
+      const regex = /^[0-9a-fA-F]{24}$/;
+      if (!regex.test(req.params.cardId)) {
         return res.status(400).send({
           message: 'Ошибка. Карточки не существует',
         });
@@ -54,7 +55,8 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
 )
   .then((card) => res.status(200).send({ data: card }))
   .catch((err, card) => {
-    if (!req.params.cardId) {
+    const regex = /^[0-9a-fA-F]{24}$/;
+    if (!regex.test(req.params.cardId)) {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
@@ -76,7 +78,8 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
 )
   .then((card) => res.status(200).send({ data: card }))
   .catch((err, card) => {
-    if (!req.params.cardId) {
+    const regex = /^[0-9a-fA-F]{24}$/;
+    if (!regex.test(req.params.cardId)) {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
