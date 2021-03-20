@@ -10,11 +10,18 @@ const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.status(200).send(user))
     .catch((err, user) => {
+      const regex = /^[0-9a-fA-F]{24}$/;
+      if (!regex.test(req.params.userId)) {
+        return res.status(400).send({
+          message: 'Айди неправильный',
+        });
+      }
       if (!user) {
         return res.status(404).send({
           message: 'Нет пользователя с таким id',
         });
-      } return res.status(500).send({
+      }
+      return res.status(500).send({
         message: `Ошибка сервера: ${err}`,
       });
     });
