@@ -90,12 +90,18 @@ const updateAvatar = (req, res) => {
     },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
+    .catch((err, user) => {
       if (!avatar) {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
         });
-      } return res.status(500).send({
+      }
+      if (!user) {
+        return res.status(404).send({
+          message: 'Пользователь не найден',
+        });
+      }
+      return res.status(500).send({
         message: `Ошибка: ${err}. Аватар не обновлен`,
       });
     });
