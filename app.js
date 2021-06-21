@@ -7,7 +7,7 @@ const noSuchPageRouter = require('./routes/noSuchPage');
 // ! импортируем роутер взаимодействия с базой пользователей
 const usersRouterDB = require('./routes/usersDB');
 
-// ! импортируем роутер взаимодей=ствия с базой карточек
+// ! импортируем роутер взаимодействия с базой карточек
 const cardsRouterDB = require('./routes/cardsDB');
 
 const app = express();
