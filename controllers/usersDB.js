@@ -1,5 +1,6 @@
 const User = require('../models/user');
 
+// ! получаем всех пользователей
 const getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))

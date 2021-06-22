@@ -33,10 +33,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-// const ownerSchema = new mongoose.Schema({
-//   type: mongoose.Schema.Types.ObjectId,
-//   ref: 'user',
-//   required: true,
-// });
-
 module.exports = mongoose.model('card', cardSchema);
