@@ -9,17 +9,19 @@ const getAllUsers = (req, res) => {
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send(user))
-    .catch((err, user) => {
+    .catch((err) => {
       const regex = /^[0-9a-fA-F]{24}$/;
       if (!regex.test(req.params.userId)) {
         return res.status(400).send({
           message: 'Айди неправильный',
         });
       }
-      if (!user) {
+      if (err.message === 'NotFoundID') {
         return res.status(404).send({
-          message: 'Нет пользователя с таким id',
+          message: 'Такого пользователя нет в базе',
+          err: err.message,
         });
       }
       return res.status(500).send({
@@ -57,16 +59,17 @@ const updateUser = (req, res) => {
       runValidators: true,
     },
   )
+    .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err, user) => {
+    .catch((err) => {
       if (!name || !about) {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
         });
       }
-      if (!user) {
+      if (err.message === 'NotFoundID') {
         return res.status(404).send({
-          message: 'Пользователь не найден',
+          message: 'Пользователя, которого вы пытаетесь отредактировать, нет в базе',
         });
       }
       return res.status(500).send(
@@ -90,16 +93,17 @@ const updateAvatar = (req, res) => {
       runValidators: true,
     },
   )
+    .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err, user) => {
+    .catch((err) => {
       if (!avatar) {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
         });
       }
-      if (!user) {
+      if (err.message === 'NotFoundID') {
         return res.status(404).send({
-          message: 'Пользователь не найден',
+          message: 'Пользователя, чей аватар вы пытаетесь изменить, нет в базе',
         });
       }
       return res.status(500).send({

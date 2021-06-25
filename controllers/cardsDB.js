@@ -9,17 +9,18 @@ const getAllCards = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail(new Error('NotFoundCardID'))
     .then((card) => res.status(200).send({
       message: `Удалено: ${card}`,
     }))
-    .catch((err, card) => {
+    .catch((err) => {
       const regex = /^[0-9a-fA-F]{24}$/;
       if (!regex.test(req.params.cardId)) {
         return res.status(400).send({
           message: 'Ошибка. Карточки не существует',
         });
       }
-      if (!card) {
+      if (err.message === 'NotFoundCardID') {
         return res.status(404).send({
           message: `Ошибка: ${err}. Нет такой карточки`,
         });
@@ -53,15 +54,16 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   { new: true },
 )
+  .orFail(new Error('NotFoundCardID'))
   .then((card) => res.status(200).send({ data: card }))
-  .catch((err, card) => {
+  .catch((err) => {
     const regex = /^[0-9a-fA-F]{24}$/;
     if (!regex.test(req.params.cardId)) {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
     }
-    if (!card) {
+    if (err.message === 'NotFoundCardID') {
       return res.status(404).send({
         message: `Ошибка: ${err}. Нет такой карточки`,
       });
@@ -76,15 +78,16 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   { new: true },
 )
+  .orFail(new Error('NotFoundCardID'))
   .then((card) => res.status(200).send({ data: card }))
-  .catch((err, card) => {
+  .catch((err) => {
     const regex = /^[0-9a-fA-F]{24}$/;
     if (!regex.test(req.params.cardId)) {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
     }
-    if (!card) {
+    if (err.message === 'NotFoundCardID') {
       return res.status(404).send({
         message: `Ошибка: ${err}. Нет такой карточки`,
       });

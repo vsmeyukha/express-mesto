@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 
 const noSuchPageRouter = require('./routes/noSuchPage');
 
@@ -21,6 +22,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 })
   .then(() => console.log('Подключено к базе данных'));
 
+app.use(helmet());
+
 // ! почему bodyParser перечеркнут?
 app.use(bodyParser.json());
 
@@ -29,7 +32,7 @@ app.use(bodyParser.json());
 // ! тем более, как мы можем прописывать на бэке, каким должен быть req ???
 app.use((req, res, next) => {
   req.user = {
-    _id: '60408bf9e910ee3a814fde4c', // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '60408bf9e910ee3a814fde4c', // вставьте сюда _id созданного в предыдущем пункте пользователя 60408bf9e910ee3a814fde4c
   };
 
   next();
