@@ -12,8 +12,7 @@ const getUserById = (req, res) => {
     .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      const regex = /^[0-9a-fA-F]{24}$/;
-      if (!regex.test(req.params.userId)) {
+      if (err.name === 'CastError') {
         return res.status(400).send({
           message: 'Айди неправильный',
         });
@@ -62,7 +61,7 @@ const updateUser = (req, res) => {
     .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (!name || !about) {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
         });
@@ -96,7 +95,7 @@ const updateAvatar = (req, res) => {
     .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (!avatar) {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
           message: 'Вы не заполнили обязательные поля',
         });

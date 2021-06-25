@@ -14,8 +14,7 @@ const deleteCard = (req, res) => {
       message: `Удалено: ${card}`,
     }))
     .catch((err) => {
-      const regex = /^[0-9a-fA-F]{24}$/;
-      if (!regex.test(req.params.cardId)) {
+      if (err.name === 'CastError') {
         return res.status(400).send({
           message: 'Ошибка. Карточки не существует',
         });
@@ -38,7 +37,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: ownerId })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (!name || !link) {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
           message: `Ошибка: ${err}. Вы не заполнили обязательные поля`,
         });
@@ -57,8 +56,7 @@ const likeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(new Error('NotFoundCardID'))
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
-    const regex = /^[0-9a-fA-F]{24}$/;
-    if (!regex.test(req.params.cardId)) {
+    if (err.name === 'CastError') {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
@@ -81,8 +79,7 @@ const dislikeCard = (req, res) => Card.findByIdAndUpdate(
   .orFail(new Error('NotFoundCardID'))
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
-    const regex = /^[0-9a-fA-F]{24}$/;
-    if (!regex.test(req.params.cardId)) {
+    if (err.name === 'CastError') {
       return res.status(400).send({
         message: `Ошибка: ${err}. Id карточки не задан.`,
       });
