@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 // ! получаем всех пользователей
@@ -30,19 +31,47 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (!name || !about) {
-        return res.status(400).send({
-          message: 'Вы не заполнили обязательные поля',
+  bcrypt.hash(password, 10)
+    .then((encryptedPassword) => {
+      console.log(encryptedPassword);
+      User.create({
+        email,
+        password: encryptedPassword,
+        name,
+        about,
+        avatar,
+      })
+        .then((user) => res.status(200).send({ data: user }))
+        .catch((err) => {
+          if (!email || !password) {
+            return res.status(400).send({
+              message: 'Вы не заполнили обязательные поля!',
+            });
+          } return res.status(500).send({
+            message: `Ошибка сервера: ${err}`,
+          });
         });
-      } return res.status(500).send({
-        message: `Ошибка сервера: ${err}`,
-      });
     });
+
+
+
+  // User.create({
+  //   email, password, name, about, avatar,
+  // })
+  //   .then((user) => res.status(200).send({ data: user }))
+  //   .catch((err) => {
+  //     if (!name || !about) {
+  //       return res.status(400).send({
+  //         message: 'Вы не заполнили обязательные поля',
+  //       });
+  //     } return res.status(500).send({
+  //       message: `Ошибка сервера: ${err}`,
+  //     });
+  //   });
 };
 
 const updateUser = (req, res) => {

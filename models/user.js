@@ -1,21 +1,35 @@
 const mongoose = require('mongoose');
+const validation = require('validator');
 
 const userSchema = new mongoose.Schema({
-  name: {
+  email: {
     type: String,
     required: true,
-    minlength: 2,
+    unique: true,
+    validate: {
+      validator(v) {
+        return validation.isEmail(v);
+      },
+      message: 'Email невалиден',
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6,
+  },
+  name: {
+    type: String,
     maxlength: 30,
+    default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
-    required: true,
-    milength: 2,
     maxlength: 30,
+    default: 'Исследователь',
   },
   avatar: {
     type: String,
-    required: true,
     validate: {
       validator(v) {
         const regex = /https?:\/\/[w{3}.]?[\S^а-яё]/gi; // ? экранируем оба слэша. далее к пути: получается, что \S ищет вообще все, кроме пробелов. значит, он нам подходит для поиска цифр, латинских букв и разных символов. но нам не нужны кириллические буквы. значит, мы их исключаем с помощью карета.
@@ -23,6 +37,7 @@ const userSchema = new mongoose.Schema({
       },
       message: 'Ссылка на аватар недействительна!',
     },
+    default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
 });
 
