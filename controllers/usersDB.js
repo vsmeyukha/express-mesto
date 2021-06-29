@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const User = require('../models/user');
 const auth = require('../middlewares/auth');
 
@@ -147,7 +148,6 @@ const login = (req, res) => {
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
-            sameSite: true,
           })
             .status(201).send({
               message: 'Аутентификация прошла успешно',
@@ -168,9 +168,27 @@ const login = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  auth();
-
-  res.status(200).send(req.user);
+  cookieParser();
+  req.user = auth();
+  User.findById(req.user._id)
+    .orFail(new Error('NotFoundID'))
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(400).send({
+          message: 'Айди неправильныйeeeee',
+        });
+      }
+      if (err.message === 'NotFoundID') {
+        return res.status(404).send({
+          message: 'Такого пользователя нет в базе',
+          err: err.message,
+        });
+      }
+      return res.status(500).send({
+        message: `Ошибка сервера: ${err}`,
+      });
+    });
 };
 
 // const login = (req, res) => {
