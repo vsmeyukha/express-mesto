@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const { login, createUser } = require('./controllers/usersDB');
+const { auth } = require('./middlewares/auth');
 
 const noSuchPageRouter = require('./routes/noSuchPage');
 
@@ -24,6 +27,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(helmet());
 
+app.use(cookieParser());
+
 // ! почему bodyParser перечеркнут?
 app.use(bodyParser.json());
 
@@ -37,6 +42,11 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+app.use(auth);
 
 app.use('/', usersRouterDB);
 
