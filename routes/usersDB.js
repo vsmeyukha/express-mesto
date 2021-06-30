@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { auth } = require('../middlewares/auth');
 
 const {
   getAllUsers,
@@ -11,13 +12,13 @@ const {
 
 router.get('/users', getAllUsers);
 
+router.get('/users/me', auth, getCurrentUser);
+
 router.get('/users/:userId', getUserById);
 
 // router.post('/users', createUser);
 
 router.patch('/users/me', updateUser);
-
-router.get('/users/me', getCurrentUser);
 
 router.patch('/users/me/avatar', updateAvatar);
 

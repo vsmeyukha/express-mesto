@@ -1,8 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const User = require('../models/user');
-const auth = require('../middlewares/auth');
 
 // ! получаем всех пользователей
 const getAllUsers = (req, res) => {
@@ -168,15 +166,13 @@ const login = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  cookieParser();
-  req.user = auth();
   User.findById(req.user._id)
     .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(400).send({
-          message: 'Айди неправильныйeeeee',
+          message: 'Айди неправильный',
         });
       }
       if (err.message === 'NotFoundID') {
