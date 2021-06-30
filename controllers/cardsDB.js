@@ -8,11 +8,20 @@ const getAllCards = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  console.log(req.user);
+  const ownerID = req.user._id;
+  Card.findById(req.params.cardId)
     .orFail(new Error('NotFoundCardID'))
-    .then((card) => res.status(200).send({
-      message: `Удалено: ${card}`,
-    }))
+    .then((card) => {
+      console.log(`Card: ${card}`);
+      if (card.owner !== ownerID) {
+        return Promise.reject(new Error('нельзя удалить чужую карточку'));
+      }
+      Card.remove({ _id: req.params.cardId });
+      return res.status(200).send({
+        message: 'Карточка успешно удалена',
+      });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(400).send({

@@ -32,17 +32,6 @@ app.use(cookieParser());
 // ! почему bodyParser перечеркнут?
 app.use(bodyParser.json());
 
-// ! почему такой код добавляет айдишник к каждому запросу?
-// ! не написано же res.send и далее по тексту.просто объявлено.
-// ! тем более, как мы можем прописывать на бэке, каким должен быть req ???
-app.use((req, res, next) => {
-  req.user = {
-    _id: '60408bf9e910ee3a814fde4c', // вставьте сюда _id созданного в предыдущем пункте пользователя 60408bf9e910ee3a814fde4c
-  };
-
-  next();
-});
-
 app.post('/signin', login);
 app.post('/signup', createUser);
 
