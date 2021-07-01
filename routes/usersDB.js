@@ -4,7 +4,6 @@ const { auth } = require('../middlewares/auth');
 const {
   getAllUsers,
   getUserById,
-  createUser,
   updateUser,
   updateAvatar,
   getCurrentUser,
@@ -15,8 +14,6 @@ router.get('/users', getAllUsers);
 router.get('/users/me', auth, getCurrentUser);
 
 router.get('/users/:userId', getUserById);
-
-// router.post('/users', createUser);
 
 router.patch('/users/me', updateUser);
 

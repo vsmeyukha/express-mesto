@@ -166,7 +166,7 @@ const login = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  User.findById(req.user._id)
+  User.findById(req.user._id).select('+password')
     .orFail(new Error('NotFoundID'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {

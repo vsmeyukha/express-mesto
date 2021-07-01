@@ -8,16 +8,23 @@ const getAllCards = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  console.log(req.user);
   const ownerID = req.user._id;
-  Card.findById(req.params.cardId)
+  console.log(`ownerID: ${ownerID}`);
+  console.log(`req.user: ${req.user}`);
+
+  Card.findOneAndRemove({
+    _id: req.params.cardId,
+    owner: ownerID,
+  })
     .orFail(new Error('NotFoundCardID'))
     .then((card) => {
-      console.log(`Card: ${card}`);
-      if (card.owner !== ownerID) {
+      console.log(`card.owner: ${card.owner}`);
+      console.log(`card: ${card}`);
+      console.log(`typeof card.owner: ${typeof card.owner}`);
+      console.log(`typeof card.owner toString: ${typeof String(card.owner)}`);
+      if (String(card.owner) !== ownerID) {
         return Promise.reject(new Error('нельзя удалить чужую карточку'));
       }
-      Card.remove({ _id: req.params.cardId });
       return res.status(200).send({
         message: 'Карточка успешно удалена',
       });
@@ -38,6 +45,40 @@ const deleteCard = (req, res) => {
       });
     });
 };
+
+// const deleteCard = (req, res) => {
+//   const ownerID = req.user._id;
+//   console.log(`ownerID: ${ownerID}`);
+//   console.log(`req.user: ${req.user}`);
+//   Card.findById(req.params.cardId)
+//     .orFail(new Error('NotFoundCardID'))
+//     .then((card) => {
+//       console.log(`card.owner: ${card.owner}`);
+//       console.log(`card: ${card}`);
+//       if (card.owner !== ownerID) {
+//         return Promise.reject(new Error('нельзя удалить чужую карточку'));
+//       }
+//       Card.remove({ _id: req.params.cardId });
+//       return res.status(200).send({
+//         message: 'Карточка успешно удалена',
+//       });
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         return res.status(400).send({
+//           message: 'Ошибка. Карточки не существует',
+//         });
+//       }
+//       if (err.message === 'NotFoundCardID') {
+//         return res.status(404).send({
+//           message: `Ошибка: ${err}. Нет такой карточки`,
+//         });
+//       }
+//       return res.status(500).send({
+//         message: `Ошибка: ${err}`,
+//       });
+//     });
+// };
 
 const createCard = (req, res) => {
   const ownerId = req.user._id;
