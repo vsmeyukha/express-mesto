@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { login, createUser } = require('./controllers/usersDB');
 const { auth } = require('./middlewares/auth');
+const errorHandler = require('./middlewares/errorHandler');
 
 const noSuchPageRouter = require('./routes/noSuchPage');
 
@@ -42,5 +43,7 @@ app.use('/', usersRouterDB);
 app.use('/', cardsRouterDB);
 
 app.use('/', noSuchPageRouter);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {});
