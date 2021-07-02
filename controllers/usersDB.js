@@ -1,9 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
+
 const NotFoundError = require('../errors/notFoundError');
 const CastError = require('../errors/castError');
 const NotFoundUserError = require('../errors/notFoundUserError');
+const SameEmailError = require('../errors/sameEmailError');
 
 // ! получаем всех пользователей
 const getAllUsers = (req, res, next) => {
@@ -13,6 +16,9 @@ const getAllUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
+  console.log(req.params);
+  console.log(req.user);
+  console.log(req.query);
   User.findById(req.params.userId)
     .orFail(new NotFoundError('Нет такого пользователя'))
     .then((user) => res.status(200).send(user))
@@ -42,6 +48,9 @@ const createUser = (req, res, next) => {
         .catch((err) => {
           if (!email || !password) {
             return next(new CastError('Вы не заполнили обязательные поля'));
+          }
+          if (err.name === 'MongoError' && err.code === 11000) {
+            return next(new SameEmailError('Пользователь с такой почтой уже зарегистрирован'));
           }
           return next(err);
         });

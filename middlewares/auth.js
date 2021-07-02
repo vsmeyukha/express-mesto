@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const NotFoundUserError = require('../errors/notFoundUserError');
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
@@ -13,7 +14,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'very-secret-key');
   } catch (err) {
-    return res.status(401).send({ message: 'Неверный токен' });
+    return next(new NotFoundUserError('Неверный токен'));
   }
 
   req.user = payload;

@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/usersDB');
 const { auth } = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
+const { validateEmailAndPassword } = require('./middlewares/celebrate');
 
 const noSuchPageRouter = require('./routes/noSuchPage');
 
@@ -33,8 +35,8 @@ app.use(cookieParser());
 // ! почему bodyParser перечеркнут?
 app.use(bodyParser.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateEmailAndPassword, login);
+app.post('/signup', validateEmailAndPassword, createUser);
 
 app.use(auth);
 
@@ -43,6 +45,8 @@ app.use('/', usersRouterDB);
 app.use('/', cardsRouterDB);
 
 app.use('/', noSuchPageRouter);
+
+app.use(errors());
 
 app.use(errorHandler);
 
