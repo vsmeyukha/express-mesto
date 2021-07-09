@@ -7,7 +7,7 @@ const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/usersDB');
 const { auth } = require('./middlewares/auth');
 const errorHandler = require('./middlewares/errorHandler');
-const { validateEmailAndPassword } = require('./middlewares/celebrate');
+const { validateEmailAndPassword, validateRegistration } = require('./middlewares/celebrate');
 
 const noSuchPageRouter = require('./routes/noSuchPage');
 
@@ -25,6 +25,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 })
   .then(() => console.log('Подключено к базе данных'));
 
@@ -36,7 +37,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.post('/signin', validateEmailAndPassword, login);
-app.post('/signup', validateEmailAndPassword, createUser);
+app.post('/signup', validateRegistration, createUser);
 
 app.use(auth);
 

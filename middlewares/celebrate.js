@@ -12,19 +12,27 @@ const validateUserId = celebrate({
   }),
 });
 
+const userInfo = {
+  name: Joi.string().max(30),
+  about: Joi.string().max(30),
+  avatar: Joi.string(),
+};
+
+const EmailAndPassword = {
+  email: Joi.string().required().email(),
+  password: Joi.string().required().min(6),
+}
+
 const validateUserInfo = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().max(30),
-    about: Joi.string().max(30),
-    avatar: Joi.string(),
-  }),
+  body: Joi.object().keys(userInfo),
 });
 
 const validateEmailAndPassword = celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(6),
-  }),
+  body: Joi.object().keys(EmailAndPassword),
+});
+
+const validateRegistration = celebrate({
+  body: Joi.object().keys({ ...userInfo, ...EmailAndPassword }),
 });
 
 const validateCardInfo = celebrate({
@@ -51,4 +59,5 @@ module.exports = {
   validateEmailAndPassword,
   validateCardInfo,
   validateCardId,
+  validateRegistration,
 };

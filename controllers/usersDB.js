@@ -44,7 +44,16 @@ const createUser = (req, res, next) => {
         about,
         avatar,
       })
-        .then((user) => res.status(200).send({ data: user }))
+        .then((user) => {
+          res.status(200).send({
+            data: {
+              email: user.email,
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+            },
+          });
+        })
         .catch((err) => {
           if (!email || !password) {
             return next(new CastError('Вы не заполнили обязательные поля'));
@@ -106,7 +115,7 @@ const updateAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new NotFoundUserError('Неправильные почта или пароль');
@@ -135,7 +144,7 @@ const login = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id).select('+password')
+  User.findById(req.user._id)
     .orFail(new NotFoundError('Такого пользователя нет в базе'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
